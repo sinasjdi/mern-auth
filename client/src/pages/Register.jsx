@@ -21,13 +21,12 @@ if(data.error)
 
 { toast.error(data.error)}
 else{setData({})
-toast.success(`Logged in as ${data.name}`)
+toast.success(`Registered as ${data.name}. Please verify the email you registered with before login.`)
 navigate('/login')
 }
         }
         catch(error){
-
-        }
+}
   }
   
     return (

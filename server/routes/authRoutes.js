@@ -1,7 +1,7 @@
 const express =require('express');
 const router=express.Router();
 const cors=require('cors')
-const {test,registerUser,loginUser,getProfile}=require('../controllers/authController')
+const {test,registerUser,loginUser,getProfile,verifyUser}=require('../controllers/authController')
 
 //middleware
 
@@ -17,5 +17,6 @@ router.get('/',test)
 router.post('/register',registerUser)
 router.post('/login',loginUser)
 router.get('/profile',getProfile)
+router.get('/verify',verifyUser)
 
 module.exports=router
