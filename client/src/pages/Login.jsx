@@ -3,6 +3,7 @@ import { useState } from 'react';
 import axios from 'axios'
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import ForgotPasswordButton from '../components/Forgotpass';
 
 export default function Login() {
   const navigate = useNavigate()
@@ -20,6 +21,7 @@ export default function Login() {
         try {
           const {data} = await axios.post('/login', {email,password})
           if (data.error) {
+            setData({})
             toast.error(data.error)
           } else {
             setData({})
@@ -30,13 +32,15 @@ export default function Login() {
   }
   
     return (
+  <>
     <form onSubmit={loginUser}>
-           
            <label>Email</label> 
            <input type="email" placeholder='enter email..' value={data.email} onChange={(e)=>setData({...data,email:e.target.value})}/>
            <label>Password</label> 
            <input type="password" placeholder='enter password..'value={data.password} onChange={(e)=>setData({...data,password:e.target.value})}/>
         <button type='submit'>Login</button>
         </form>
+       <ForgotPasswordButton/>
+        </>    
   )
 }

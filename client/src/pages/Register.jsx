@@ -1,8 +1,9 @@
-import React from 'react'
+
 import { useState } from 'react';
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+
 
 export default function Register() {
 const navigate=useNavigate()
@@ -21,11 +22,12 @@ if(data.error)
 
 { toast.error(data.error)}
 else{setData({})
-toast.success(`Registered as ${data.name}. Please verify the email you registered with before login.`)
+toast.success(`Registered as ${data.name}. Please verify your email before login.`)
 navigate('/login')
 }
         }
         catch(error){
+          toast.error("There was an error!")
 }
   }
   

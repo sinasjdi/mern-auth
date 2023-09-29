@@ -13,8 +13,8 @@ export function UserContextProvider({ children }) {
         setUser(data);
       });
     }
-  }, [user]); // Include user in the dependency array
-
+  }, []); // Include user in the dependency array
+ 
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}

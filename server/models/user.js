@@ -13,7 +13,7 @@ isVerified: {
   type: Boolean,
   default: false, // You can set the default value as per your requirements
 },
-
+passVerification: String,
 
 })
 
