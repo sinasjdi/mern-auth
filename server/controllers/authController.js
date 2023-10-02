@@ -7,6 +7,15 @@ const {
 } = require("../helpers/auth")
 const jwt = require('jsonwebtoken');
 const router = require('../routes/authRoutes');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+
+
+
+
+
+
 
 
 
@@ -129,7 +138,14 @@ const loginUser = async (req, res) => {
             })
         }
 
+
+
         const match = await comparePassword(password, user.password)
+
+
+
+
+
         if (match) {
             jwt.sign({
                 email: user.email,
@@ -307,28 +323,142 @@ const resetPass = async (req, res) => {
 
 }
 
-
-
-
 const getProfile = (req, res) => {
     const {
         token
     } = req.cookies
+
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
             if (err) throw err;
             res.json(user)
         })
-
     } else {
+        console.log("JWT was not provided!")
         res.json(null)
+
     }
 
 }
 
 
 
+const getProfileViaGoogleToken = async (req, res) => {
+    const token = req.body.token;
 
+
+    try {
+        // Find the user by verification token
+        const user = await User.findOne({
+            googleVerificationToken: token
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'Token not found or expired.'
+            });
+        }
+
+        jwt.sign({
+            email: user.email,
+            id: user._id,
+            name: user.name
+        }, process.env.JWT_SECRET, {}, (err, token) => {
+            if (err) throw err;
+            res.cookie('token', token).json(user)
+        })
+
+
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'there was and error identifying the user'
+        });
+    }
+
+
+}
+
+
+
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+    callbackURL: `${process.env.BACK_URL}/auth/google/callback`,
+
+}, (accessToken, refreshToken, profile, done) => {
+    try {
+        // Handle user data here
+        //console.log(profile);
+        done(null, profile);
+    } catch (error) {
+        console.error(error);
+        done(error, null);
+    }
+}));
+
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+    done(null, user);
+});
+
+
+
+
+
+
+
+
+const googleCallback = async (req, res) => {
+    try {
+        console.log(req.user._json.email);
+
+        const googleUser = await User.findOne({
+            email: req.user._json.email
+        });
+
+        const GoogleVerification = generateVerificationToken();
+
+        if (!googleUser) {
+            const user = await User.create({
+                name: req.user._json.given_name,
+                email: req.user._json.email,
+                isVerified: true,
+                googleVerificationToken: GoogleVerification,
+            });
+            await user.save();
+        } else {
+            const updatedUser = await User.findOneAndUpdate({
+                    email: req.user._json.email
+                }, {
+                    $set: {
+                        googleVerificationToken: GoogleVerification
+                    }
+                }, {
+                    new: true
+                } // This option ensures that you get the updated user object back
+            );
+
+            if (!updatedUser) {
+                throw new Error('Failed to update user.');
+            }
+        }
+
+        // Redirect to the dashboard after successful authentication and database operations
+        res.redirect(`${process.env.FRONT_URL}/googlelogin/${GoogleVerification}`);
+    } catch (error) {
+        // Handle errors
+        console.error(error);
+        res.status(500).json({
+            error: 'Internal Server Error'
+        });
+    }
+};
 
 
 module.exports = {
@@ -338,5 +468,7 @@ module.exports = {
     getProfile,
     verifyUser,
     forgotPass,
-    resetPass
+    resetPass,
+    googleCallback,
+    getProfileViaGoogleToken,
 }

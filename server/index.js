@@ -5,6 +5,8 @@ const {mongoose}=require('mongoose')
 const cookieParser=require('cookie-parser')
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const session = require('express-session');
+const passport = require('passport');
 
 
 
@@ -23,11 +25,21 @@ app.use(cors({
   }));
 
 app.use(express.json())
+
 app.use(cookieParser())
 app.use(express.urlencoded({extended:false}))
 
+app.use(session({
+  secret: 'secret', // Change this to a secure secret
+  resave: true,
+  saveUninitialized: true
+}));
 
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/',require('./routes/authRoutes.js'))
+
+
 
 
 const port=8000;

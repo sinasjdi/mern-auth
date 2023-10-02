@@ -18,7 +18,7 @@ export default function Dashboard() {
   // Render the Dashboard once the user data is available
   return (
     <div>
-      <h1>Dashboard</h1>
+      <h1>Dashboard!!</h1>
       {!!user && <h2> Hi {user.name}!</h2>}
     </div>
   );

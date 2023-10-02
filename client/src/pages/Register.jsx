@@ -3,6 +3,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import Oath2Login from '../components/Oath2login';
 
 
 export default function Register() {
@@ -32,6 +33,7 @@ navigate('/login')
   }
   
     return (
+    <>
     <div>
         <form onSubmit={registerUser}>
            <label>Name</label> 
@@ -43,5 +45,7 @@ navigate('/login')
         <button type='submit'>Submit</button>
         </form>
     </div>
+    <Oath2Login/>
+    </>
   )
 }

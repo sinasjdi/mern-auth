@@ -13,6 +13,7 @@ import Forgotpass from './pages/Forgotpass'
 import ResetPassword from './pages/ResetPassword'
 import VerifyUser from './pages/VerifyUser'
 import SignOut from './pages/Signout'
+import Googlelogin from './pages/Googlelogin'
 
 
 axios.defaults.baseURL="http://localhost:8000";
@@ -33,6 +34,7 @@ function App() {
       <Route path='/reset-password/:token' element={<ResetPassword/>}/>
       <Route path='/verify/:token' element={<VerifyUser/>}/>
       <Route path="/signout" element={<SignOut/>} />
+      <Route path='/googlelogin/:token' element={<Googlelogin/>}/>
      </Routes>
      </UserContextProvider>
   )
